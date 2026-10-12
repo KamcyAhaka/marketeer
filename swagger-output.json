@@ -1,0 +1,391 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Marketeer E-Commerce REST API",
+    "description": "CSE 341 Final Project - Catalog management API supporting full CRUD operations for Products and Categories with MongoDB",
+    "version": "1.0.0"
+  },
+  "host": "localhost:3000",
+  "basePath": "/",
+  "tags": [
+    {
+      "name": "Home",
+      "description": "API root and status"
+    },
+    {
+      "name": "Products",
+      "description": "CRUD operations on the products collection"
+    },
+    {
+      "name": "Categories",
+      "description": "CRUD operations on the categories collection"
+    }
+  ],
+  "schemes": [
+    "https",
+    "http"
+  ],
+  "paths": {
+    "/": {
+      "get": {
+        "tags": [
+          "Home"
+        ],
+        "description": "Welcome endpoint with API information and documentation link",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/products/": {
+      "get": {
+        "tags": [
+          "Products"
+        ],
+        "description": "Retrieve all products from the catalog",
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved all products"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Products"
+        ],
+        "description": "Create a new product in the catalog",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Product object to add",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Product"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Product created successfully"
+          },
+          "400": {
+            "description": "Validation failed or missing required fields"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/products/{id}": {
+      "get": {
+        "tags": [
+          "Products"
+        ],
+        "description": "Retrieve a single product by its MongoDB ObjectId",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Product MongoDB ObjectId (24 hex characters)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved the product"
+          },
+          "400": {
+            "description": "Invalid product ID format"
+          },
+          "404": {
+            "description": "Product not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Products"
+        ],
+        "description": "Update an existing product by its MongoDB ObjectId",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Product MongoDB ObjectId (24 hex characters)"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Updated product object",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Product"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Product updated successfully"
+          },
+          "400": {
+            "description": "Validation failed or invalid ID format"
+          },
+          "404": {
+            "description": "Product not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Products"
+        ],
+        "description": "Delete a product by its MongoDB ObjectId",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Product MongoDB ObjectId (24 hex characters)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Product deleted successfully"
+          },
+          "400": {
+            "description": "Invalid product ID format"
+          },
+          "404": {
+            "description": "Product not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/categories/": {
+      "get": {
+        "tags": [
+          "Categories"
+        ],
+        "description": "Retrieve all product categories",
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved all categories"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Categories"
+        ],
+        "description": "Create a new category in the catalog",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Category object to create",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Category"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Category created successfully"
+          },
+          "400": {
+            "description": "Validation failed or missing required fields"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/categories/{id}": {
+      "get": {
+        "tags": [
+          "Categories"
+        ],
+        "description": "Retrieve a single category by its MongoDB ObjectId",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Category MongoDB ObjectId (24 hex characters)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved the category"
+          },
+          "400": {
+            "description": "Invalid category ID format"
+          },
+          "404": {
+            "description": "Category not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Categories"
+        ],
+        "description": "Update an existing category by its MongoDB ObjectId",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Category MongoDB ObjectId (24 hex characters)"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Updated category object",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Category"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Category updated successfully"
+          },
+          "400": {
+            "description": "Validation failed or invalid ID format"
+          },
+          "404": {
+            "description": "Category not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Categories"
+        ],
+        "description": "Delete a category by its MongoDB ObjectId",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Category MongoDB ObjectId (24 hex characters)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Category deleted successfully"
+          },
+          "400": {
+            "description": "Invalid category ID format"
+          },
+          "404": {
+            "description": "Category not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Product": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "example": "Sony WH-1000XM5 Wireless Headphones"
+        },
+        "description": {
+          "type": "string",
+          "example": "Industry leading noise canceling headphones with two processors and 8 microphones."
+        },
+        "price": {
+          "type": "number",
+          "example": 398
+        },
+        "category": {
+          "type": "string",
+          "example": "Electronics"
+        },
+        "stockQuantity": {
+          "type": "number",
+          "example": 25
+        },
+        "brand": {
+          "type": "string",
+          "example": "Sony"
+        },
+        "sku": {
+          "type": "string",
+          "example": "SONY-WH1000XM5-BLK"
+        },
+        "rating": {
+          "type": "number",
+          "example": 4.8
+        },
+        "imageUrl": {
+          "type": "string",
+          "example": "https://m.media-amazon.com/images/I/61+elLndqVL._AC_SL1500_.jpg"
+        }
+      }
+    },
+    "Category": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "example": "Electronics"
+        },
+        "description": {
+          "type": "string",
+          "example": "Smartphones, audio gear, computing accessories, and personal electronics."
+        },
+        "slug": {
+          "type": "string",
+          "example": "electronics"
+        },
+        "isActive": {
+          "type": "boolean",
+          "example": true
+        }
+      }
+    }
+  }
+}

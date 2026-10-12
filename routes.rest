@@ -1,0 +1,131 @@
+### ==============================================================================
+### LOCALHOST TESTING (http://localhost:3000)
+### ==============================================================================
+
+### Root API Check
+GET http://localhost:3000/
+
+### Swagger Documentation
+GET http://localhost:3000/api-docs/
+
+### ------------------------------------------------------------------------------
+### PRODUCTS ENDPOINTS (Localhost)
+### ------------------------------------------------------------------------------
+
+### 1. GET all products
+GET http://localhost:3000/products
+
+### 2. POST create a new product (9 fields per proposal)
+POST http://localhost:3000/products HTTP/1.1
+Content-Type: application/json
+
+{
+  "title": "Sony WH-1000XM5 Wireless Headphones",
+  "description": "Industry leading noise canceling headphones with two processors and 8 microphones.",
+  "price": 398.00,
+  "category": "Electronics",
+  "stockQuantity": 25,
+  "brand": "Sony",
+  "sku": "SONY-WH1000XM5-BLK",
+  "rating": 4.8,
+  "imageUrl": "https://m.media-amazon.com/images/I/61+elLndqVL._AC_SL1500_.jpg"
+}
+
+### 3. GET single product by ID (Replace with an existing ObjectId from your database)
+GET http://localhost:3000/products/6520a1b2c3d4e5f6a7b8c9d0
+
+### 4. PUT update product by ID (Replace with an existing ObjectId)
+PUT http://localhost:3000/products/6520a1b2c3d4e5f6a7b8c9d0 HTTP/1.1
+Content-Type: application/json
+
+{
+  "title": "Sony WH-1000XM5 Wireless Headphones (Midnight Blue)",
+  "description": "Updated edition with premium travel case and ultra-comfort ear cups.",
+  "price": 349.99,
+  "category": "Electronics",
+  "stockQuantity": 18,
+  "brand": "Sony",
+  "sku": "SONY-WH1000XM5-BLU",
+  "rating": 4.9,
+  "imageUrl": "https://m.media-amazon.com/images/I/61+elLndqVL._AC_SL1500_.jpg"
+}
+
+### 5. DELETE product by ID (Replace with an existing ObjectId)
+DELETE http://localhost:3000/products/6520a1b2c3d4e5f6a7b8c9d0
+
+### 6. Test Product Error Handling - Invalid ObjectId (should return 400)
+GET http://localhost:3000/products/invalid-id-123
+
+### 7. Test Product Error Handling - Missing required fields (should return 400)
+POST http://localhost:3000/products HTTP/1.1
+Content-Type: application/json
+
+{
+  "title": "Incomplete Product"
+}
+
+
+### ------------------------------------------------------------------------------
+### CATEGORIES ENDPOINTS (Localhost)
+### ------------------------------------------------------------------------------
+
+### 1. GET all categories
+GET http://localhost:3000/categories
+
+### 2. POST create a new category (4 fields per proposal)
+POST http://localhost:3000/categories HTTP/1.1
+Content-Type: application/json
+
+{
+  "name": "Electronics",
+  "description": "Smartphones, audio gear, computing accessories, and personal electronics.",
+  "slug": "electronics",
+  "isActive": true
+}
+
+### 3. GET single category by ID (Replace with an existing ObjectId)
+GET http://localhost:3000/categories/6520a1b2c3d4e5f6a7b8c9d1
+
+### 4. PUT update category by ID (Replace with an existing ObjectId)
+PUT http://localhost:3000/categories/6520a1b2c3d4e5f6a7b8c9d1 HTTP/1.1
+Content-Type: application/json
+
+{
+  "name": "Consumer Electronics & Audio",
+  "description": "Expanded catalog of electronics, smart wearables, and hi-fi audio.",
+  "slug": "consumer-electronics-audio",
+  "isActive": true
+}
+
+### 5. DELETE category by ID (Replace with an existing ObjectId)
+DELETE http://localhost:3000/categories/6520a1b2c3d4e5f6a7b8c9d1
+
+### 6. Test Category Error Handling - Invalid ObjectId (should return 400)
+GET http://localhost:3000/categories/invalid-category-id
+
+### 7. Test Category Error Handling - Missing required fields (should return 400)
+POST http://localhost:3000/categories HTTP/1.1
+Content-Type: application/json
+
+{
+  "name": "Bad Category"
+}
+
+
+### ==============================================================================
+### PRODUCTION / RENDER TESTING (Replace with your actual Render URL)
+### ==============================================================================
+
+@renderHost = https://marketeer-api.onrender.com
+
+### Render Root Check
+GET {{renderHost}}/
+
+### Render Swagger Documentation
+GET {{renderHost}}/api-docs/
+
+### Render Products GET
+GET {{renderHost}}/products
+
+### Render Categories GET
+GET {{renderHost}}/categories
