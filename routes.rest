@@ -64,6 +64,22 @@ Content-Type: application/json
   "title": "Incomplete Product"
 }
 
+### 8. Test Product Error Handling - Duplicate SKU (should return 400)
+POST http://localhost:3000/products HTTP/1.1
+Content-Type: application/json
+
+{
+  "title": "Sony WH-1000XM5 Wireless Headphones (Duplicate)",
+  "description": "Trying to insert with an existing SKU.",
+  "price": 398.00,
+  "category": "Electronics",
+  "stockQuantity": 10,
+  "brand": "Sony",
+  "sku": "SONY-WH1000XM5-BLK",
+  "rating": 4.5,
+  "imageUrl": "https://m.media-amazon.com/images/I/61+elLndqVL._AC_SL1500_.jpg"
+}
+
 
 ### ------------------------------------------------------------------------------
 ### CATEGORIES ENDPOINTS (Localhost)
@@ -109,6 +125,17 @@ Content-Type: application/json
 
 {
   "name": "Bad Category"
+}
+
+### 8. Test Category Error Handling - Duplicate slug (should return 400)
+POST http://localhost:3000/categories HTTP/1.1
+Content-Type: application/json
+
+{
+  "name": "Electronics Clone",
+  "description": "Attempting to create another category with slug 'electronics'.",
+  "slug": "electronics",
+  "isActive": true
 }
 
 

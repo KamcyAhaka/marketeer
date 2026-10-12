@@ -120,6 +120,20 @@ const createProduct = async (req, res) => {
       imageUrl,
     } = req.body;
 
+    const normalizedSku = sku.trim().toUpperCase();
+
+    // Enforce unique SKU
+    const existingSku = await mongodb
+      .getDb()
+      .collection(COLLECTION_NAME)
+      .findOne({ sku: normalizedSku });
+
+    if (existingSku) {
+      return res.status(400).json({
+        error: `A product with SKU '${normalizedSku}' already exists`,
+      });
+    }
+
     const newProduct = {
       title: title.trim(),
       description: description.trim(),
@@ -127,7 +141,7 @@ const createProduct = async (req, res) => {
       category: category.trim(),
       stockQuantity: Number(stockQuantity),
       brand: brand.trim(),
-      sku: sku.trim().toUpperCase(),
+      sku: normalizedSku,
       rating: Number(rating),
       imageUrl: imageUrl.trim(),
       createdAt: new Date(),
@@ -173,6 +187,23 @@ const updateProduct = async (req, res) => {
       imageUrl,
     } = req.body;
 
+    const normalizedSku = sku.trim().toUpperCase();
+
+    // Enforce unique SKU across other products
+    const existingSku = await mongodb
+      .getDb()
+      .collection(COLLECTION_NAME)
+      .findOne({
+        sku: normalizedSku,
+        _id: { $ne: new ObjectId(id) },
+      });
+
+    if (existingSku) {
+      return res.status(400).json({
+        error: `Another product with SKU '${normalizedSku}' already exists`,
+      });
+    }
+
     const updatedProduct = {
       title: title.trim(),
       description: description.trim(),
@@ -180,7 +211,7 @@ const updateProduct = async (req, res) => {
       category: category.trim(),
       stockQuantity: Number(stockQuantity),
       brand: brand.trim(),
-      sku: sku.trim().toUpperCase(),
+      sku: normalizedSku,
       rating: Number(rating),
       imageUrl: imageUrl.trim(),
       updatedAt: new Date(),

@@ -73,12 +73,25 @@ const createCategory = async (req, res) => {
       });
     }
 
-    const { name, description, slug, isActive } = body = req.body;
+    const { name, description, slug, isActive } = req.body;
+    const normalizedSlug = slug.trim().toLowerCase();
+
+    // Enforce unique slug
+    const existingSlug = await mongodb
+      .getDb()
+      .collection(COLLECTION_NAME)
+      .findOne({ slug: normalizedSlug });
+
+    if (existingSlug) {
+      return res.status(400).json({
+        error: `A category with slug '${normalizedSlug}' already exists`,
+      });
+    }
 
     const newCategory = {
       name: name.trim(),
       description: description.trim(),
-      slug: slug.trim().toLowerCase(),
+      slug: normalizedSlug,
       isActive: Boolean(isActive),
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -112,11 +125,27 @@ const updateCategory = async (req, res) => {
     }
 
     const { name, description, slug, isActive } = req.body;
+    const normalizedSlug = slug.trim().toLowerCase();
+
+    // Enforce unique slug across other categories
+    const existingSlug = await mongodb
+      .getDb()
+      .collection(COLLECTION_NAME)
+      .findOne({
+        slug: normalizedSlug,
+        _id: { $ne: new ObjectId(id) },
+      });
+
+    if (existingSlug) {
+      return res.status(400).json({
+        error: `Another category with slug '${normalizedSlug}' already exists`,
+      });
+    }
 
     const updatedCategory = {
       name: name.trim(),
       description: description.trim(),
-      slug: slug.trim().toLowerCase(),
+      slug: normalizedSlug,
       isActive: Boolean(isActive),
       updatedAt: new Date(),
     };
