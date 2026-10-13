@@ -153,16 +153,6 @@ router.get('/', (req, res) => {
             <a class="btn btn-logout" href="/logout">Logout</a>
           </div>
         </div>
-
-        <div class="card">
-          <h3 style="margin-top: 0; font-size: 1.05rem;">Quick Collection Endpoints:</h3>
-          <div class="grid">
-            <a class="collection-card" href="/products">📦 Products &rarr;</a>
-            <a class="collection-card" href="/categories">🗂️ Categories &rarr;</a>
-            <a class="collection-card" href="/orders">🛒 Orders &rarr;</a>
-            <a class="collection-card" href="/reviews">⭐ Reviews &rarr;</a>
-          </div>
-        </div>
       </body>
       </html>
     `);
