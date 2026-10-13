@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const productsController = require('../controllers/products');
+const { isAuthenticated } = require('../middleware/authenticate');
 
 // GET all products
 router.get(
@@ -25,11 +26,12 @@ router.get(
   productsController.getSingle
 );
 
-// POST create a new product
+// POST create a new product (Protected)
 router.post(
   '/',
   // #swagger.tags = ['Products']
-  // #swagger.description = 'Create a new product in the catalog'
+  // #swagger.description = 'Create a new product in the catalog (Requires authentication)'
+  // #swagger.security = [{ "cookieAuth": [] }]
   /* #swagger.parameters['body'] = {
       in: 'body',
       description: 'Product object to add',
@@ -38,15 +40,18 @@ router.post(
   } */
   // #swagger.responses[201] = { description: 'Product created successfully' }
   // #swagger.responses[400] = { description: 'Validation failed or missing required fields' }
+  // #swagger.responses[401] = { description: 'Unauthorized - Login required' }
   // #swagger.responses[500] = { description: 'Internal server error' }
+  isAuthenticated,
   productsController.createProduct
 );
 
-// PUT update a product by ID
+// PUT update a product by ID (Protected)
 router.put(
   '/:id',
   // #swagger.tags = ['Products']
-  // #swagger.description = 'Update an existing product by its MongoDB ObjectId'
+  // #swagger.description = 'Update an existing product by its MongoDB ObjectId (Requires authentication)'
+  // #swagger.security = [{ "cookieAuth": [] }]
   // #swagger.parameters['id'] = { description: 'Product MongoDB ObjectId (24 hex characters)', required: true }
   /* #swagger.parameters['body'] = {
       in: 'body',
@@ -56,21 +61,26 @@ router.put(
   } */
   // #swagger.responses[204] = { description: 'Product updated successfully' }
   // #swagger.responses[400] = { description: 'Validation failed or invalid ID format' }
+  // #swagger.responses[401] = { description: 'Unauthorized - Login required' }
   // #swagger.responses[404] = { description: 'Product not found' }
   // #swagger.responses[500] = { description: 'Internal server error' }
+  isAuthenticated,
   productsController.updateProduct
 );
 
-// DELETE a product by ID
+// DELETE a product by ID (Protected)
 router.delete(
   '/:id',
   // #swagger.tags = ['Products']
-  // #swagger.description = 'Delete a product by its MongoDB ObjectId'
+  // #swagger.description = 'Delete a product by its MongoDB ObjectId (Requires authentication)'
+  // #swagger.security = [{ "cookieAuth": [] }]
   // #swagger.parameters['id'] = { description: 'Product MongoDB ObjectId (24 hex characters)', required: true }
   // #swagger.responses[200] = { description: 'Product deleted successfully' }
   // #swagger.responses[400] = { description: 'Invalid product ID format' }
+  // #swagger.responses[401] = { description: 'Unauthorized - Login required' }
   // #swagger.responses[404] = { description: 'Product not found' }
   // #swagger.responses[500] = { description: 'Internal server error' }
+  isAuthenticated,
   productsController.deleteProduct
 );
 
