@@ -1,5 +1,8 @@
 const express = require('express');
 const cors = require('cors');
+const session = require('express-session');
+const passport = require('passport');
+const GitHubStrategy = require('passport-github2').Strategy;
 const dotenv = require('dotenv');
 dotenv.config();
 
@@ -11,7 +14,7 @@ let swaggerDocument;
 try {
   swaggerDocument = require('./swagger-output.json');
 } catch (e) {
-  swaggerDocument = { swagger: '2.0', info: { title: 'Marketeer API', version: '1.0.0' } };
+  swaggerDocument = { swagger: '2.0', info: { title: 'Marketeer API', version: '2.0.0' } };
 }
 
 const app = express();
@@ -24,7 +27,63 @@ app.enable('trust proxy');
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// CORS configuration
+// Session configuration
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET || 'cse341-marketeer-session-secret-key-prod',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      maxAge: 24 * 60 * 60 * 1000, // 24 hours
+      secure: false, // Set to true if under pure HTTPS with trust proxy
+    },
+  })
+);
+
+// Initialize Passport
+app.use(passport.initialize());
+app.use(passport.session());
+
+// Passport serialization
+passport.serializeUser((user, done) => {
+  done(null, user);
+});
+
+passport.deserializeUser((user, done) => {
+  done(null, user);
+});
+
+// Configure GitHub OAuth Callback URL
+const getCallbackUrl = () => {
+  if (process.env.CALLBACK_URL) {
+    return process.env.CALLBACK_URL;
+  }
+  if (process.env.HOST) {
+    return `https://${process.env.HOST}/github/callback`;
+  }
+  return 'http://localhost:3000/github/callback';
+};
+
+// Initialize GitHub OAuth Strategy if credentials exist
+if (process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_SECRET) {
+  passport.use(
+    new GitHubStrategy(
+      {
+        clientID: process.env.GITHUB_CLIENT_ID,
+        clientSecret: process.env.GITHUB_CLIENT_SECRET,
+        callbackURL: getCallbackUrl(),
+      },
+      (accessToken, refreshToken, profile, done) => {
+        return done(null, profile);
+      }
+    )
+  );
+  console.log(`GitHub OAuth configured with callback: ${getCallbackUrl()}`);
+} else {
+  console.log('GitHub OAuth credentials not set. Set GITHUB_CLIENT_ID and GITHUB_CLIENT_SECRET in .env');
+}
+
+// CORS configuration for cross-origin and credentialed requests
 app.use(
   cors({
     origin: (origin, callback) => {
@@ -39,6 +98,7 @@ app.use(
       'Accept',
       'Z-Key',
       'Authorization',
+      'Cookie',
     ],
   })
 );
@@ -69,14 +129,18 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: 'An unexpected internal server error occurred', details: err.message });
 });
 
-// Initialize database and start listening
-mongodb.initDb((err) => {
-  if (err) {
-    console.error('Failed to initialize database connection:', err);
-  } else {
-    app.listen(port, () => {
-      console.log(`Marketeer server running and listening on port ${port}`);
-      console.log(`Swagger documentation available at http://localhost:${port}/api-docs`);
-    });
-  }
-});
+// Initialize database and start listening (only when not in test environment)
+if (process.env.NODE_ENV !== 'test') {
+  mongodb.initDb((err) => {
+    if (err) {
+      console.error('Failed to initialize database connection:', err);
+    } else {
+      app.listen(port, () => {
+        console.log(`Marketeer server running and listening on port ${port}`);
+        console.log(`Swagger documentation available at http://localhost:${port}/api-docs`);
+      });
+    }
+  });
+}
+
+module.exports = app;
