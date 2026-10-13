@@ -135,11 +135,6 @@ router.get('/', (req, res) => {
         </style>
       </head>
       <body>
-        <div class="header">
-          <h1>Marketeer REST API</h1>
-          <span class="badge">● Authenticated</span>
-        </div>
-
         <div class="card">
           <div class="user-profile">
             ${avatarUrl ? `<img class="user-avatar" src="${avatarUrl}" alt="Avatar">` : ''}
